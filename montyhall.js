@@ -44,9 +44,18 @@ document.addEventListener("DOMContentLoaded", function(e) {
 		<div id="gamesarray"></div>
 	`;
 	document.getElementById("run").addEventListener("click", function(){
+		let now = Date.now();
 		let simcount = document.getElementById("numsimcount").value
+		if (simcount > 1000000)
+			simcount = 1000000;
+		else if (simcount < 0)
+			simcount = 0;
 		let simulation = games(simcount);
 		document.getElementById("results").innerHTML = 'asdf';
-		document.getElementById("gamesarray").innerHTML = JSON.stringify(simulation);
+		
+		let later = Date.now();
+		//document.getElementById("gamesarray").innerHTML = JSON.stringify(simulation);
+		//testing time taken
+		document.getElementById("gamesarray").innerHTML = (later-now);
 	});
 });
