@@ -12,7 +12,7 @@ let game = function(){
 	ret[randindex][Object.keys(ret[randindex])[0]] = 1;
 	return ret
 }
-let simulator = function(args){
+let games = function(args){
 	let ret = [];
 
 	for(let i=0; i<args; i++){
@@ -21,7 +21,8 @@ let simulator = function(args){
 	return ret;
 }
 
-let simulation = simulator(50);
+let simulation = games(10);
+console.log(simulation);
 
 
 
@@ -32,5 +33,5 @@ let simulation = simulator(50);
 document.addEventListener("DOMContentLoaded", function(e) {
 	let p = document.createElement("p");
 	document.body.appendChild(p);
-	p.innerHTML = `Rooms array: ${JSON.stringify(simulation)}`;
+	p.innerHTML = `Simulator array: ${JSON.stringify(simulation)}`;
 });
