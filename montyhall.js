@@ -95,10 +95,7 @@ const loaddom = () =>{
 		</select>
 		<br>
 		<button id="run">Run Simulation</button>
-		<div>
-			<div style="display: inline-block;"> Results: </div>
-			<div id="results" style="display: inline-block;"></div>
-		</div>
+		<div id="results"></div>
 		<div>Show games array
 			<input id="showgamesarray" type="checkbox"></input>
 		</div>
@@ -115,6 +112,7 @@ const calc = ga => {
 	let simcount = document.getElementById("numsimcount").value
 	let results = document.getElementById("results");
 	let change = document.getElementById("switch");
+	let timestart = Date.now();
 	if ((simcount > 1000000) || (simcount < 1) || (isNaN(simcount))){
 		results.innerHTML = "Please input number between 1 and 1 million";
 		ga.innerHTML = null;
@@ -124,18 +122,20 @@ const calc = ga => {
 	simulation = pickroom(simulation);
 	simulation = eliminate(simulation);
 	Number(change.value) ? simulation = changeroom(simulation) : null;
-	let winpercent;
-	winpercent = getwinpercentage(simulation);
-	results.innerHTML = `Win%: ${winpercent}`;
+	results.innerHTML = `
+		Win%: ${getwinpercentage(simulation)}
+		<br>
+		TimeTaken: ${(Date.now() - timestart)/1000} seconds
+	`;
 	ga.style.display === 'block' ? ga.innerHTML = JSON.stringify(simulation, undefined, 2) : null;
 } 
 
-const togglegamesarray = arg => {
-	if (arg.style.display === 'block'){
-		arg.style.display = 'none'
+const togglegamesarray = ga => {
+	if (ga.style.display === 'block'){
+		ga.style.display = 'none'
 		return;
 	} else {
-		arg.style.display = 'block'
-		simulation ? arg.innerHTML = JSON.stringify(simulation, undefined, 2) : null;
+		ga.style.display = 'block'
+		simulation ? ga.innerHTML = JSON.stringify(simulation, undefined, 2) : null;
 	}
 }
