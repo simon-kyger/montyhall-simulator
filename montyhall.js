@@ -1,5 +1,10 @@
 //setup
-const game = function(){
+
+const getrandomroom = () => {
+	return Math.floor(Math.random() * 3);
+}
+
+const game = () => {
 	let ret = [{
 			room1: 0
 		},{
@@ -14,73 +19,14 @@ const game = function(){
 	ret[randindex][Object.keys(ret[randindex])[0]] = 1;
 	return ret
 }
-const games = function(args){
+
+const games = args => {
 	let ret = [];
 
 	for(let i=0; i<args; i++){
-		ret.push({ ['game'+(i+1)]: new game});
+		ret.push({ ['game'+(i+1)]: game()});
 	}
 	return ret;
-}
-
-const getrandomroom = function(){
-	return Math.floor(Math.random() * 3);
-}
-
-//rendering
-
-document.addEventListener("DOMContentLoaded", () => loaddom());
-
-const loaddom = () =>{
-	document.body.appendChild(document.createElement("div")).innerHTML = `
-		<div>Number of Simulations</div>
-		<input id="numsimcount"></input>
-		<select id="switch">
-			<option value="0">Dont Switch</option>
-			<option value="1">Switch</option>
-		</select>
-		<br>
-		<button id="run">Run Simulation</button>
-		<div>Results: </div>
-		<div id="results">TEST</div>
-		<div>Show games array</div>
-		<input id="showgamesarray" type="checkbox"></input>
-		<pre id="gamesarray"></code>
-	`;
-	const ga = document.getElementById("gamesarray");
-	document.getElementById("run").addEventListener("click", () => calc(ga));
-	document.getElementById("showgamesarray").addEventListener("change", () => togglegamesarray(ga));
-}
-
-let simulation;
-
-const calc = ga => {
-	let simcount = document.getElementById("numsimcount").value
-	let results = document.getElementById("results");
-	let change = document.getElementById("switch");
-	if ((simcount > 1000000) || (simcount < 1) || (isNaN(simcount))){
-		results.innerHTML = "Please input number between 1 and 1 million";
-		simulation = [];
-		return;
-	}
-	simulation = games(simcount);
-	simulation = pickroom(simulation);
-	simulation = eliminate(simulation);
-	Number(change.value) ? simulation = changeroom(simulation) : null;
-	let winpercent;
-	winpercent = getwinpercentage(simulation);
-	results.innerHTML = `Win%: ${winpercent}`;
-	ga.style.display === 'block' ? ga.innerHTML = JSON.stringify(simulation, undefined, 2) : null;
-} 
-
-const togglegamesarray = arg => {
-	if (arg.style.display === 'block'){
-		arg.style.display = 'none'
-		return;
-	} else {
-		arg.style.display = 'block'
-		arg.innerHTML = JSON.stringify(simulation, undefined, 2)
-	}
 }
 
 const pickroom = arg => {
@@ -107,7 +53,8 @@ const eliminate = arg => {
 	}
 	return arg;	
 }
-const changeroom = (arg) => {
+
+const changeroom = arg => {
 	for (let i =0; i<arg.length; i++){
 		let g = arg[i]['game'+(i+1)]
 		for (let j=0; j<g.length-1; j++){
@@ -132,4 +79,61 @@ const getwinpercentage = arg => {
 		}
 	}
 	return wins / arg.length;
+}
+
+//rendering
+
+document.addEventListener("DOMContentLoaded", () => loaddom());
+
+const loaddom = () =>{
+	document.body.appendChild(document.createElement("div")).innerHTML = `
+		<div>Number of Simulations</div>
+		<input id="numsimcount"></input>
+		<select id="switch">
+			<option value="0">Dont Switch</option>
+			<option value="1">Switch</option>
+		</select>
+		<br>
+		<button id="run">Run Simulation</button>
+		<div>Results: </div>
+		<div id="results">TEST</div>
+		<div>Show games array
+			<input id="showgamesarray" type="checkbox"></input>
+		</div>
+		<pre id="gamesarray"></code>
+	`;
+	const ga = document.getElementById("gamesarray");
+	document.getElementById("run").addEventListener("click", () => calc(ga));
+	document.getElementById("showgamesarray").addEventListener("change", () => togglegamesarray(ga));
+}
+
+let simulation;
+
+const calc = ga => {
+	let simcount = document.getElementById("numsimcount").value
+	let results = document.getElementById("results");
+	let change = document.getElementById("switch");
+	if ((simcount > 1000000) || (simcount < 1) || (isNaN(simcount))){
+		results.innerHTML = "Please input number between 1 and 1 million";
+		ga.innerHTML = null;
+		return;
+	}
+	simulation = games(simcount);
+	simulation = pickroom(simulation);
+	simulation = eliminate(simulation);
+	Number(change.value) ? simulation = changeroom(simulation) : null;
+	let winpercent;
+	winpercent = getwinpercentage(simulation);
+	results.innerHTML = `Win%: ${winpercent}`;
+	ga.style.display === 'block' ? ga.innerHTML = JSON.stringify(simulation, undefined, 2) : null;
+} 
+
+const togglegamesarray = arg => {
+	if (arg.style.display === 'block'){
+		arg.style.display = 'none'
+		return;
+	} else {
+		arg.style.display = 'block'
+		simulation ? arg.innerHTML = JSON.stringify(simulation, undefined, 2) : null;
+	}
 }
