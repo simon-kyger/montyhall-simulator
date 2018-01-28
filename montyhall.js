@@ -1,13 +1,13 @@
 //setup
 const game = function(){
-	this[0] = null;
-	this[1] = null;
-	this[2] = null;
+	this[0] = 0;
+	this[1] = 0;
+	this[2] = 0;
 	this.pick = Math.floor(Math.random() * 3);
 	this.correctpick = Math.floor(Math.random() * 3);
 	this[this.correctpick] = 1;
 	for (let i=0; i<3; i++){
-		if ((this[i] !== 1) && (i !== this.pick)){
+		if ((this[i] !== 1) && (this.pick !== i)){
 			this.eliminated = i;
 			break;
 		}
@@ -45,7 +45,7 @@ const getwinpercentage = arg => {
 
 //rendering
 let simulation;
-const maxsim = 4000000;
+const maxsim = 5000000;
 
 const renderbrowser = () => {
 	document.addEventListener("DOMContentLoaded", () => loaddom());
