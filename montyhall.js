@@ -5,63 +5,43 @@ const getrandomroom = () => {
 }
 
 const game = () => {
-	let ret = [{
-			room1: 0
-		},{
-			room2: 0
-		},{
-			room3: 0
-		},{
-			pick: {}
-		}
-	];
-	let randindex = getrandomroom();
-	ret[randindex][Object.keys(ret[randindex])[0]] = 1;
-	return ret
+	let correctpick = getrandomroom();
+	let ret = {
+		0: null,
+		1: null,
+		2: null,
+		'pick': getrandomroom(),
+		'correctpick': correctpick,
+	}
+	ret[correctpick] = 1;
+	ret = eliminate(ret)
+	return ret;
 }
 
 const games = args => {
 	let ret = [];
-
 	for(let i=0; i<args; i++){
-		ret.push({ ['game'+(i+1)]: game()});
+		ret.push(game());
 	}
 	return ret;
 }
 
-const pickroom = arg => {
-	for (let i = 0; i<arg.length; i++){
-		let g = arg[i][Object.keys(arg[i])];
-		let rnum = getrandomroom()+1;
-		g[g.length-1].pick = ('room'+rnum);
-	}
-	return arg;
-}
-
 const eliminate = arg => {
-	for (let i = 0; i<arg.length; i++){
-		let g = arg[i]['game'+[i+1]];
-		for (let j=0; j<g.length-1; j++){
-			let room = Object.keys(g[j])[0]
-			let val = g[j][Object.keys(g[j])[0]];
-			let pick = g[g.length-1].pick;
-			if ((pick !==room) && (val !== 1)){
-				g.splice(j, 1);
-				break;
-			}
+	for (let i=0; i<3; i++){
+		if((arg[i] !== 1) && (Number(Object.keys(arg)[i]) !== arg.pick)){
+			arg.eliminated = Number(Object.keys(arg)[i]);
+			break;
 		}
 	}
 	return arg;	
 }
 
 const changeroom = arg => {
-	for (let i =0; i<arg.length; i++){
-		let g = arg[i]['game'+(i+1)]
-		for (let j=0; j<g.length-1; j++){
-			let room = Object.keys(g[j])[0];
-			let pick = g[g.length-1].pick;
-			if (pick !== room){
-				g[g.length-1].pick = room;
+	let x = arg.length
+	for (let i=0; i<x; i++){ 
+		for (let j=0; j<3; j++){
+			if ((Number(j) !== arg[i].eliminated) && (Number(j)!== arg[i].pick)){
+				arg[i].pick = Number(j);
 				break;
 			}
 		}
@@ -71,12 +51,8 @@ const changeroom = arg => {
 
 const getwinpercentage = arg => {
 	let wins = 0;
-	for (let i =0; i<arg.length; i++){
-		let g = arg[i]['game'+(i+1)];
-		for (let j=0; j<g.length-1; j++){
-			if (g[j][g[g.length-1].pick])
-				wins++;
-		}
+	for (let i in arg){
+		arg[i].correctpick == arg[i].pick ? wins++ : null
 	}
 	return wins / arg.length;
 }
@@ -112,14 +88,12 @@ if (typeof window !== 'undefined'){
 		let results = document.getElementById("results");
 		let change = document.getElementById("switch");
 		let timestart = Date.now();
-		if ((simcount > 1000000) || (simcount < 1) || (isNaN(simcount))){
-			results.innerHTML = "Please input number between 1 and 1 million";
+		if ((simcount > 5000000) || (simcount < 1) || (isNaN(simcount))){
+			results.innerHTML = "Please input number between 1 and 5 million";
 			ga.innerHTML = null;
 			return;
 		}
 		simulation = games(simcount);
-		simulation = pickroom(simulation);
-		simulation = eliminate(simulation);
 		Number(change.value) ? simulation = changeroom(simulation) : null;
 		results.innerHTML = `
 			Win%: ${getwinpercentage(simulation)}
@@ -139,16 +113,17 @@ if (typeof window !== 'undefined'){
 		}
 	}
 } else {
-	const simcount = 1000000;
-	const change = 0;
+	let args = process.argv.slice(2);
+	const simcount = args[0] || 1000000;
+	const change = args[1] || true;
 	const timestart = Date.now();
 	simulation = games(simcount);
-	simulation = pickroom(simulation);
-	simulation = eliminate(simulation);
 	change ? simulation = changeroom(simulation) : null;
+	const strategy = change ? 'Player swapped choices every game.' : 'Player did not swap their choices in any game.'
 	console.log(`
 		Out of ${simcount} runs:
 		Win%: ${getwinpercentage(simulation)}
+		Strategy: ${strategy}
 		TimeTaken: ${(Date.now() - timestart)/1000} seconds
 	`);
 }
