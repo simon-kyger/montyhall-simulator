@@ -83,12 +83,12 @@ const renderbrowser = () => {
 		}
 		simulation = games(simcount);
 		Number(change.value) ? simulation = changeroom(simulation) : null;
+		ga.style.display === 'block' ? ga.innerHTML = JSON.stringify(simulation, undefined, 2) : null;
 		results.innerHTML = `
 			Win%: ${getwinpercentage(simulation)}
 			<br>
 			TimeTaken: ${(Date.now() - timestart)/1000} seconds
 		`;
-		ga.style.display === 'block' ? ga.innerHTML = JSON.stringify(simulation, undefined, 2) : null;
 	} 
 
 	const togglegamesarray = ga => {
