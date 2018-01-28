@@ -1,28 +1,22 @@
 //setup
-
-const getrandomroom = () => {
-	return Math.floor(Math.random() * 3);
-}
-
 const game = function(){
-	let correctpick = getrandomroom();
 	this[0] = null;
 	this[1] = null;
 	this[2] = null;
-	this.pick = getrandomroom();
-	this.correctpick = correctpick;
-	this[correctpick] = 1;
+	this.pick = Math.floor(Math.random() * 3);
+	this.correctpick = Math.floor(Math.random() * 3);
+	this[this.correctpick] = 1;
 	for (let i=0; i<3; i++){
-		if ((this[i] !== 1) && (Number(Object.keys(this)[i]) !== this.pick)){
-			this.eliminated = Number(Object.keys(this)[i]);
+		if ((this[i] !== 1) && (i !== this.pick)){
+			this.eliminated = i;
 			break;
 		}
 	}
 }
 
-const games = args => {
+const games = arg => {
 	let ret = [];
-	for(let i=0; i<args; i++){
+	for(let i=0; i<arg; i++){
 		ret.push(new game);
 	}
 	return ret;
@@ -109,31 +103,31 @@ const renderbrowser = () => {
 }
 
 const rendernode = () =>{
-	let args = process.argv.slice(2);
-	if (!args[0] || isNaN(args[0])){
+	let arg = process.argv.slice(2);
+	if (!arg[0] || isNaN(arg[0])){
 		console.log(`Requires minimum simulation count as first argument`);
 		return;
 	}
-	if (args[0]>maxsim){
-		console.log(`Reduce args to between 1 and ${maxsim}`);
+	if (arg[0]>maxsim){
+		console.log(`Reduce arg to between 1 and ${maxsim}`);
 		return;
 	}
-	if (!args[1]){
+	if (!arg[1]){
 		console.log(`Strategy unknown. Add second argument to swap strategy`);
 		console.log(`ex: 'node montyhall.js 10000 1'`);
 		return;
 	}
 	const timestart = Date.now();
-	simulation = games(args[0]);
+	simulation = games(arg[0]);
 	let strategy;
-	if (args[1] == true){
+	if (arg[1] == true){
 		simulation = changeroom(simulation);
 		strategy = 'Player swapped choices every game.';
 	} else {
 		strategy = 'Player did not swap their choices in any game.'
 	}
 	console.log(`
-		Out of ${args[0]} runs:
+		Out of ${arg[0]} runs:
 		Win%: ${getwinpercentage(simulation)}
 		Strategy: ${strategy}
 		TimeTaken: ${(Date.now() - timestart)/1000} seconds
