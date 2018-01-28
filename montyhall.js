@@ -26,8 +26,8 @@ const changeroom = arg => {
 	let x = arg.length
 	for (let i=0; i<x; i++){ 
 		for (let j=0; j<3; j++){
-			if ((Number(j) !== arg[i].eliminated) && (Number(j)!== arg[i].pick)){
-				arg[i].pick = Number(j);
+			if ((arg[i].eliminated !== j) && (arg[i].pick!==j)){
+				arg[i].pick = j;
 				break;
 			}
 		}
@@ -37,7 +37,8 @@ const changeroom = arg => {
 
 const getwinpercentage = arg => {
 	let wins = 0;
-	for (let i in arg){
+	let x = arg.length;
+	for (let i=0; i<x; i++){
 		arg[i].correctpick == arg[i].pick ? wins++ : null
 	}
 	return wins / arg.length;
