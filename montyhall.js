@@ -33,7 +33,7 @@ const pickroom = arg => {
 	for (let i = 0; i<arg.length; i++){
 		let g = arg[i][Object.keys(arg[i])];
 		let rnum = getrandomroom()+1;
-		g[3].pick = ('room'+rnum);
+		g[g.length-1].pick = ('room'+rnum);
 	}
 	return arg;
 }
@@ -44,7 +44,7 @@ const eliminate = arg => {
 		for (let j=0; j<g.length-1; j++){
 			let room = Object.keys(g[j])[0]
 			let val = g[j][Object.keys(g[j])[0]];
-			let pick = g[3].pick;
+			let pick = g[g.length-1].pick;
 			if ((pick !==room) && (val !== 1)){
 				g.splice(j, 1);
 				break;
@@ -59,9 +59,9 @@ const changeroom = arg => {
 		let g = arg[i]['game'+(i+1)]
 		for (let j=0; j<g.length-1; j++){
 			let room = Object.keys(g[j])[0];
-			let pick = g[2].pick;
+			let pick = g[g.length-1].pick;
 			if (pick !== room){
-				g[2].pick = room;
+				g[g.length-1].pick = room;
 				break;
 			}
 		}
@@ -74,7 +74,7 @@ const getwinpercentage = arg => {
 	for (let i =0; i<arg.length; i++){
 		let g = arg[i]['game'+(i+1)];
 		for (let j=0; j<g.length-1; j++){
-			if (g[j][g[2].pick])
+			if (g[j][g[g.length-1].pick])
 				wins++;
 		}
 	}
@@ -95,8 +95,10 @@ const loaddom = () =>{
 		</select>
 		<br>
 		<button id="run">Run Simulation</button>
-		<div>Results: </div>
-		<div id="results">TEST</div>
+		<div>
+			<div style="display: inline-block;"> Results: </div>
+			<div id="results" style="display: inline-block;"></div>
+		</div>
 		<div>Show games array
 			<input id="showgamesarray" type="checkbox"></input>
 		</div>
