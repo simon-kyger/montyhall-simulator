@@ -82,60 +82,73 @@ const getwinpercentage = arg => {
 }
 
 //rendering
-
-document.addEventListener("DOMContentLoaded", () => loaddom());
-
-const loaddom = () =>{
-	document.body.appendChild(document.createElement("div")).innerHTML = `
-		<div>Number of Simulations</div>
-		<input id="numsimcount"></input>
-		<select id="switch">
-			<option value="0">Dont Switch</option>
-			<option value="1">Switch</option>
-		</select>
-		<br>
-		<button id="run">Run Simulation</button>
-		<div id="results"></div>
-		<div>Show games array
-			<input id="showgamesarray" type="checkbox"></input>
-		</div>
-		<pre id="gamesarray"></code>
-	`;
-	const ga = document.getElementById("gamesarray");
-	document.getElementById("run").addEventListener("click", () => calc(ga));
-	document.getElementById("showgamesarray").addEventListener("change", () => togglegamesarray(ga));
-}
-
 let simulation;
+if (typeof window !== 'undefined'){
+	document.addEventListener("DOMContentLoaded", () => loaddom());
 
-const calc = ga => {
-	let simcount = document.getElementById("numsimcount").value
-	let results = document.getElementById("results");
-	let change = document.getElementById("switch");
-	let timestart = Date.now();
-	if ((simcount > 1000000) || (simcount < 1) || (isNaN(simcount))){
-		results.innerHTML = "Please input number between 1 and 1 million";
-		ga.innerHTML = null;
-		return;
+	const loaddom = () =>{
+		document.body.appendChild(document.createElement("div")).innerHTML = `
+			<div>Number of Simulations</div>
+			<input id="numsimcount"></input>
+			<select id="switch">
+				<option value="0">Dont Switch</option>
+				<option value="1">Switch</option>
+			</select>
+			<br>
+			<button id="run">Run Simulation</button>
+			<div id="results"></div>
+			<div>Show games array
+				<input id="showgamesarray" type="checkbox"></input>
+			</div>
+			<pre id="gamesarray"></code>
+		`;
+		const ga = document.getElementById("gamesarray");
+		document.getElementById("run").addEventListener("click", () => calc(ga));
+		document.getElementById("showgamesarray").addEventListener("change", () => togglegamesarray(ga));
 	}
+
+	const calc = ga => {
+		let simcount = document.getElementById("numsimcount").value
+		let results = document.getElementById("results");
+		let change = document.getElementById("switch");
+		let timestart = Date.now();
+		if ((simcount > 1000000) || (simcount < 1) || (isNaN(simcount))){
+			results.innerHTML = "Please input number between 1 and 1 million";
+			ga.innerHTML = null;
+			return;
+		}
+		simulation = games(simcount);
+		simulation = pickroom(simulation);
+		simulation = eliminate(simulation);
+		Number(change.value) ? simulation = changeroom(simulation) : null;
+		results.innerHTML = `
+			Win%: ${getwinpercentage(simulation)}
+			<br>
+			TimeTaken: ${(Date.now() - timestart)/1000} seconds
+		`;
+		ga.style.display === 'block' ? ga.innerHTML = JSON.stringify(simulation, undefined, 2) : null;
+	} 
+
+	const togglegamesarray = ga => {
+		if (ga.style.display === 'block'){
+			ga.style.display = 'none'
+			return;
+		} else {
+			ga.style.display = 'block'
+			simulation ? ga.innerHTML = JSON.stringify(simulation, undefined, 2) : null;
+		}
+	}
+} else {
+	const simcount = 1000000;
+	const change = 0;
+	const timestart = Date.now();
 	simulation = games(simcount);
 	simulation = pickroom(simulation);
 	simulation = eliminate(simulation);
-	Number(change.value) ? simulation = changeroom(simulation) : null;
-	results.innerHTML = `
+	change ? simulation = changeroom(simulation) : null;
+	console.log(`
+		Out of ${simcount} runs:
 		Win%: ${getwinpercentage(simulation)}
-		<br>
 		TimeTaken: ${(Date.now() - timestart)/1000} seconds
-	`;
-	ga.style.display === 'block' ? ga.innerHTML = JSON.stringify(simulation, undefined, 2) : null;
-} 
-
-const togglegamesarray = ga => {
-	if (ga.style.display === 'block'){
-		ga.style.display = 'none'
-		return;
-	} else {
-		ga.style.display = 'block'
-		simulation ? ga.innerHTML = JSON.stringify(simulation, undefined, 2) : null;
-	}
+	`);
 }
