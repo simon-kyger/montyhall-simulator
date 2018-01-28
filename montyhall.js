@@ -4,36 +4,28 @@ const getrandomroom = () => {
 	return Math.floor(Math.random() * 3);
 }
 
-const game = () => {
+const game = function(){
 	let correctpick = getrandomroom();
-	let ret = {
-		0: null,
-		1: null,
-		2: null,
-		'pick': getrandomroom(),
-		'correctpick': correctpick,
+	this[0] = null;
+	this[1] = null;
+	this[2] = null;
+	this.pick = getrandomroom();
+	this.correctpick = correctpick;
+	this[correctpick] = 1;
+	for (let i=0; i<3; i++){
+		if ((this[i] !== 1) && (Number(Object.keys(this)[i]) !== this.pick)){
+			this.eliminated = Number(Object.keys(this)[i]);
+			break;
+		}
 	}
-	ret[correctpick] = 1;
-	ret = eliminate(ret)
-	return ret;
 }
 
 const games = args => {
 	let ret = [];
 	for(let i=0; i<args; i++){
-		ret.push(game());
+		ret.push(new game);
 	}
 	return ret;
-}
-
-const eliminate = arg => {
-	for (let i=0; i<3; i++){
-		if((arg[i] !== 1) && (Number(Object.keys(arg)[i]) !== arg.pick)){
-			arg.eliminated = Number(Object.keys(arg)[i]);
-			break;
-		}
-	}
-	return arg;	
 }
 
 const changeroom = arg => {
@@ -60,7 +52,8 @@ const getwinpercentage = arg => {
 //rendering
 let simulation;
 const maxsim = 4000000;
-if (typeof window !== 'undefined'){
+
+const renderbrowser = () => {
 	document.addEventListener("DOMContentLoaded", () => loaddom());
 
 	const loaddom = () =>{
@@ -113,14 +106,16 @@ if (typeof window !== 'undefined'){
 			simulation ? ga.innerHTML = JSON.stringify(simulation, undefined, 2) : null;
 		}
 	}
-} else {
+}
+
+const rendernode = () =>{
 	let args = process.argv.slice(2);
 	if (!args[0] || isNaN(args[0])){
-		console.log(`Requires minimum simulation count as first argument`)
+		console.log(`Requires minimum simulation count as first argument`);
 		return;
 	}
 	if (args[0]>maxsim){
-		console.log(`Reduce args to between 1 and ${maxsim}`)
+		console.log(`Reduce args to between 1 and ${maxsim}`);
 		return;
 	}
 	if (!args[1]){
@@ -143,4 +138,10 @@ if (typeof window !== 'undefined'){
 		Strategy: ${strategy}
 		TimeTaken: ${(Date.now() - timestart)/1000} seconds
 	`);
+}
+
+if (typeof window !== 'undefined'){
+	renderbrowser();
+} else {
+	rendernode();
 }
