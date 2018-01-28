@@ -59,6 +59,7 @@ const getwinpercentage = arg => {
 
 //rendering
 let simulation;
+const maxsim = 4000000;
 if (typeof window !== 'undefined'){
 	document.addEventListener("DOMContentLoaded", () => loaddom());
 
@@ -88,8 +89,8 @@ if (typeof window !== 'undefined'){
 		let results = document.getElementById("results");
 		let change = document.getElementById("switch");
 		let timestart = Date.now();
-		if ((simcount > 5000000) || (simcount < 1) || (isNaN(simcount))){
-			results.innerHTML = "Please input number between 1 and 5 million";
+		if ((simcount > maxsim) || (simcount < 1) || (isNaN(simcount))){
+			results.innerHTML = `Please input number between 1 and ${maxsim}`;
 			ga.innerHTML = null;
 			return;
 		}
@@ -114,14 +115,30 @@ if (typeof window !== 'undefined'){
 	}
 } else {
 	let args = process.argv.slice(2);
-	const simcount = args[0] || 1000000;
-	const change = args[1] || true;
+	if (!args[0] || isNaN(args[0])){
+		console.log(`Requires minimum simulation count as first argument`)
+		return;
+	}
+	if (args[0]>maxsim){
+		console.log(`Reduce args to between 1 and ${maxsim}`)
+		return;
+	}
+	if (!args[1]){
+		console.log(`Strategy unknown. Add second argument to swap strategy`);
+		console.log(`ex: 'node montyhall.js 10000 1'`);
+		return;
+	}
 	const timestart = Date.now();
-	simulation = games(simcount);
-	change ? simulation = changeroom(simulation) : null;
-	const strategy = change ? 'Player swapped choices every game.' : 'Player did not swap their choices in any game.'
+	simulation = games(args[0]);
+	let strategy;
+	if (args[1] == true){
+		simulation = changeroom(simulation);
+		strategy = 'Player swapped choices every game.';
+	} else {
+		strategy = 'Player did not swap their choices in any game.'
+	}
 	console.log(`
-		Out of ${simcount} runs:
+		Out of ${args[0]} runs:
 		Win%: ${getwinpercentage(simulation)}
 		Strategy: ${strategy}
 		TimeTaken: ${(Date.now() - timestart)/1000} seconds
