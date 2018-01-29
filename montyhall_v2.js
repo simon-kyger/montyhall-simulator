@@ -75,15 +75,15 @@ const workerMessagingHandler = e => {
 }
 
 const code = `
-	let programData = {};
+	let data = {};
 	let startTime = 0;
 	let switchdoor = false;
 	
-	onmessage = evt => {
-		programData = evt.data;
+	onmessage = e => {
+		data = e.data;
 		startTime = performance.now();
-		switchdoor = evt.data.switchDoors;
-		calculateGames(programData.nGames);
+		switchdoor = e.data.switchDoors;
+		calculateGames(data.nGames);
 	};
 
 	// Create a game
@@ -100,7 +100,7 @@ const code = `
 		};
 	};
 
-	const getWinner = game => ~~(game.correctpick === game.pick);
+	const getWinner = game => (game.correctpick === game.pick);
 
 	const winningGenerator = function*(n) {
 		let wins = 0;
@@ -117,16 +117,16 @@ const code = `
     	let iterations = 0;
 
     	while (nGames--) {
-      		programData.wins = funNGames.next().value;
+      		data.wins = funNGames.next().value;
       		if (iterations++ % 10000 === 0) {
         		postMessage({
           			currentlyAt: iterations,
-          			wins: programData.wins
+          			wins: data.wins
         		});
       		}
     	}
-    	programData.timed = (performance.now() - startTime).toFixed(3);
-    	postMessage(programData);
+    	data.timed = (performance.now() - startTime).toFixed(3);
+    	postMessage(data);
   	}
 `
 
