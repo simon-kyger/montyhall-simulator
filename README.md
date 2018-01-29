@@ -1,7 +1,7 @@
 # montyhall-simulator
 A simulation for running x amount of 'Lets Make A Deal' games where a bot can switch or not switch their answer
 
-# Original montyhall.js
+# montyhall.js
 
 ## To run in node requires 2 arguments:  simcount and strategy
 
@@ -19,7 +19,7 @@ node montyhall.js 1000000 1
 
 node montyhall.js 5000 0
 
-# Updated version montyhall_v2.js
+# montyhall_v2.js
 
 ## Runs only in the browser
 
