@@ -33,13 +33,7 @@ const simulate = () => {
     const worker = getWorker();
     worker.addEventListener("message", workerMessagingHandler);
 
-	const cleanUp = playOut => {
-		timing.textContent = "";
-		result.textContent = "";
-		setTimeout(playOut, 0);
-	};
-
-    const clickHandle = () => {
+	const clickHandle = () => {
 		cleanUp(() => {
 			const nGames = nOfGames.value || 5000000;
 			const switchAlways = switchDoors.checked;
@@ -48,12 +42,18 @@ const simulate = () => {
 				switchDoors: switchAlways
 			});
 		});
-    }
+	}
 
 	return {
   		handleRequest: clickHandle
 	};
 }
+
+const cleanUp = playOut => {
+	timing.textContent = "";
+	result.textContent = "";
+	setTimeout(playOut, 0);
+};
 
 const report = results => {
 	intermediate.textContent = "";
@@ -68,8 +68,7 @@ const report = results => {
 
 const workerMessagingHandler = e => {
 	if (e.data.currentlyAt) {
-		return intermediate.innerHTML = `Playing: now at game #${
-		e.data.currentlyAt}, ${e.data.wins} won`;
+		return intermediate.innerHTML = `Playing: now at game #${e.data.currentlyAt}, ${e.data.wins} won`;
 	}
 	return report(e.data);
 }
