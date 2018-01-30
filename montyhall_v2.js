@@ -34,6 +34,8 @@ const simulate = () => {
     worker.addEventListener("message", workerMessagingHandler);
 
     const clickHandle = () => {
+		timing.textContent = "";
+    	result.textContent = "";
 		const nGames = nOfGames.value || 5000000;
 		const switchAlways = switchDoors.checked;
 		worker.postMessage({
