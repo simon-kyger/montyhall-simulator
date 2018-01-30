@@ -71,6 +71,11 @@ const workerMessagingHandler = e => {
 }
 
 const code = `
+	//worker code
+	//beware, window and document, and anything associated with those things, is not available here.
+	//console appears to work in chrome, but doubtful it'll work in majority of browsers
+	//self returns: DedicatedWorkerGlobalScope {onmessage: ƒ, onmessageerror: null, postMessage: ƒ, close: ƒ, webkitRequestFileSystem: ƒ, …}
+
 	let data = {};
 	let startTime = 0;
 	let switchdoor = false;
