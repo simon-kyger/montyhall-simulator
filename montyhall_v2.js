@@ -62,8 +62,7 @@ const report = results => {
 
 const workerMessagingHandler = e => {
 	if (e.data.currentlyAt) {
-		return intermediate.innerHTML = `Playing: now at game #${
-		e.data.currentlyAt}, ${e.data.wins} won`;
+		return intermediate.innerHTML = `Playing: now at game #${e.data.currentlyAt}, ${e.data.wins} won`;
 	}
 	return report(e.data);
 }
