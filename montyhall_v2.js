@@ -20,6 +20,9 @@ const renderbrowser = () => {
 const rendernode = () => {
 	let arg = process.argv.slice(2);
 	//? rofl
+	console.log(`Not currently engineered for node.  Need to conduct more research on how to implement a web/service worker in node`);
+	console.log(`For now, run the associated index.html in a browser.  Sorry =(`);
+	return;
 }
 
 typeof window !== 'undefined' ? renderbrowser() : rendernode();
