@@ -45,7 +45,7 @@ const simulate = () => {
     }
 
 	return {
-  		handleRequest: clickHandle
+		handleRequest: clickHandle
 	};
 }
 
