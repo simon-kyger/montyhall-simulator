@@ -33,20 +33,12 @@ const simulate = () => {
     const worker = getWorker();
     worker.addEventListener("message", workerMessagingHandler);
 
-	const cleanUp = playOut => {
-		timing.textContent = "";
-		result.textContent = "";
-		setTimeout(playOut, 0);
-	};
-
     const clickHandle = () => {
-		cleanUp(() => {
-			const nGames = nOfGames.value || 5000000;
-			const switchAlways = switchDoors.checked;
-			worker.postMessage({
-				nGames: nGames,
-				switchDoors: switchAlways
-			});
+		const nGames = nOfGames.value || 5000000;
+		const switchAlways = switchDoors.checked;
+		worker.postMessage({
+			nGames: nGames,
+			switchDoors: switchAlways
 		});
     }
 
