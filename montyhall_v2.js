@@ -25,15 +25,15 @@ const rendernode = () => {
 typeof window !== 'undefined' ? renderbrowser() : rendernode();
 
 const simulate = () => {
-    const result = document.querySelector("#result");
-    const timing = document.querySelector("#timing");
-    const nOfGames = document.querySelector("#nGames");
-    const switchDoors = document.querySelector("#switchyn");
-    const intermediate = document.querySelector("#intermediate");
-    const worker = getWorker();
-    worker.addEventListener("message", workerMessagingHandler);
+	const result = document.querySelector("#result");
+	const timing = document.querySelector("#timing");
+	const nOfGames = document.querySelector("#nGames");
+	const switchDoors = document.querySelector("#switchyn");
+	const intermediate = document.querySelector("#intermediate");
+	const worker = getWorker();
+	worker.addEventListener("message", workerMessagingHandler);
 
-    const clickHandle = () => {
+	const clickHandle = () => {
 		timing.textContent = "";
 		result.textContent = "";
 		const nGames = nOfGames.value || 5000000;
@@ -42,7 +42,7 @@ const simulate = () => {
 			nGames: nGames,
 			switchDoors: switchAlways
 		});
-    }
+	}
 
 	return {
 		handleRequest: clickHandle
@@ -98,30 +98,30 @@ const code = `
 
 	const winningGenerator = function*(n) {
 		let wins = 0;
-    	while (n--) {
-      		wins += getWinner(game());
-      		yield wins;
-    	}
-  	};
+		while (n--) {
+			wins += getWinner(game());
+			yield wins;
+		}
+	};
 
-  	// calculate the number of succeeded games
-  	const calculateGames = (nGames) => {
-    	const funNGames = winningGenerator(nGames);
-    	let numberOfWins = 0;
-    	let iterations = 0;
+	// calculate the number of succeeded games
+	const calculateGames = (nGames) => {
+		const funNGames = winningGenerator(nGames);
+		let numberOfWins = 0;
+		let iterations = 0;
 
-    	while (nGames--) {
-      		data.wins = funNGames.next().value;
-      		if (iterations++ % 10000 === 0) {
-        		postMessage({
-          			currentlyAt: iterations,
-          			wins: data.wins
-        		});
-      		}
-    	}
-    	data.timed = (performance.now() - startTime).toFixed(3);
-    	postMessage(data);
-  	}
+		while (nGames--) {
+			data.wins = funNGames.next().value;
+			if (iterations++ % 10000 === 0) {
+				postMessage({
+					currentlyAt: iterations,
+					wins: data.wins
+				});
+			}
+		}
+		data.timed = (performance.now() - startTime).toFixed(3);
+		postMessage(data);
+	}
 `
 
 const getWorker = () => {
