@@ -135,8 +135,4 @@ const rendernode = () =>{
 	`);
 }
 
-if (typeof window !== 'undefined'){
-	renderbrowser();
-} else {
-	rendernode();
-}
+typeof window !== 'undefined' ? renderbrowser() : rendernode();
